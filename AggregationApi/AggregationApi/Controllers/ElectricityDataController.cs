@@ -9,31 +9,30 @@ namespace AggregationApi.Controllers
     [ApiController]
     public class ElectricityDataController : ControllerBase
     {
-        private readonly ElectricityDataService _electricityDataProcessor;
+        private readonly ElectricityDataService _electricityDataService;
 
-        public ElectricityDataController(ElectricityDataService electricityDataProcessor)
+        public ElectricityDataController(ElectricityDataService electricityDataService)
         {
-            _electricityDataProcessor = electricityDataProcessor;
+            _electricityDataService = electricityDataService;
         }
         [HttpPost("download")]
         public async Task<IActionResult> DownloadData()
         {
-            var data = await _electricityDataProcessor.DownloadData();
-            await _electricityDataProcessor.SaveData(data);
+            await _electricityDataService.DownloadDataAndStoreInDatabase();
             return Ok();
         }
 
         [HttpGet("get")]
         public async Task<IActionResult> GetData()
         {
-            var data = await _electricityDataProcessor.GetData();
+            var data = await _electricityDataService.GetData();
             return Ok(data);
         }
 
         [HttpDelete("delete")]
         public async Task<IActionResult> DeleteData()
         {
-            await _electricityDataProcessor.DeleteData();
+            await _electricityDataService.DeleteData();
             return NoContent();
         }
     }

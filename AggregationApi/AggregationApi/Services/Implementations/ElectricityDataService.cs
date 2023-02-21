@@ -20,11 +20,20 @@ namespace AggregationApi.Services.Implementations
             _context = context;
         }
 
-        public async Task<List<ElectricityDataCsvModel>> DownloadData()
+        public async Task DownloadDataAndStoreInDatabase()
         {
-            var electricityData = new List<ElectricityDataCsvModel>();
+            var files = await DownloadCsvFiles();
+
+            var data = ReadDataFromCsvFiles(files);
+
+            await SaveData(data);
+        }
+
+        public async Task<List<byte[]>> DownloadCsvFiles()
+        {
             var csvFiles = new List<byte[]>();
             var fileDownloadTasks = new List<Task>();
+
             foreach (var url in Constants.CsvFileUrls)
             {
                 fileDownloadTasks.Add(Task.Run(async () =>
@@ -33,8 +42,14 @@ namespace AggregationApi.Services.Implementations
                 }));
             }
 
-
             await Task.WhenAll(fileDownloadTasks);
+
+            return csvFiles;
+        }
+
+        public List<ElectricityDataCsvModel> ReadDataFromCsvFiles(List<byte[]> csvFiles)
+        {
+            var electricityData = new List<ElectricityDataCsvModel>();
 
             foreach (var csvFile in csvFiles)
             {

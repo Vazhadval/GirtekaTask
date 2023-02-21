@@ -13,8 +13,7 @@ namespace AggregationApi.Services.Implementations
 
         public async Task<byte[]> DownloadContentAsync(string url)
         {
-            var result = await _client.GetAsync(url);
-            return await result.Content.ReadAsByteArrayAsync();
+            return await _client.GetByteArrayAsync(url);
         }
     }
 }
