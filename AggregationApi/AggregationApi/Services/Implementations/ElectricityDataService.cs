@@ -23,10 +23,21 @@ namespace AggregationApi.Services.Implementations
         public async Task<List<ElectricityDataCsvModel>> DownloadData()
         {
             var electricityData = new List<ElectricityDataCsvModel>();
+            var csvFiles = new List<byte[]>();
+            var fileDownloadTasks = new List<Task>();
             foreach (var url in Constants.CsvFileUrls)
             {
-                var csvFile = await _contentDownloader.DownloadContentAsync(url);
+                fileDownloadTasks.Add(Task.Run(async () =>
+                {
+                    csvFiles.Add(await _contentDownloader.DownloadContentAsync(url));
+                }));
+            }
 
+
+            await Task.WhenAll(fileDownloadTasks);
+
+            foreach (var csvFile in csvFiles)
+            {
                 var data = _electricityDataCsvReader.Read(csvFile);
                 var apartmentsData = data.Where(x => x.ObtName.ToLower() == Constants.ObtNameFilter);
                 electricityData.AddRange(apartmentsData);
