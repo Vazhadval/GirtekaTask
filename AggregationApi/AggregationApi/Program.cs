@@ -14,7 +14,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Docker")));
 
 builder.Services.AddScoped<IContentDownloader, HttpClientContentDownloader>();
 builder.Services.AddScoped<IElectricityDataCsvReader, ElectricityDataCsvReader>();
@@ -30,12 +30,9 @@ var app = builder.Build();
 
 DbInitializer.Initialize(app);
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
