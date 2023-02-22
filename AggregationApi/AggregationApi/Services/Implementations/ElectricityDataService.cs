@@ -12,12 +12,14 @@ namespace AggregationApi.Services.Implementations
         private readonly IContentDownloader _contentDownloader;
         private readonly IElectricityDataCsvReader _electricityDataCsvReader;
         private readonly AppDbContext _context;
+        private readonly ILogger<ElectricityDataService> _logger;
 
-        public ElectricityDataService(IContentDownloader contentDownloader, IElectricityDataCsvReader electricityDataCsvReader, AppDbContext context)
+        public ElectricityDataService(IContentDownloader contentDownloader, IElectricityDataCsvReader electricityDataCsvReader, AppDbContext context, ILogger<ElectricityDataService> logger)
         {
             _contentDownloader = contentDownloader;
             _electricityDataCsvReader = electricityDataCsvReader;
             _context = context;
+            _logger = logger;
         }
 
         public async Task DownloadDataAndStoreInDatabase()
@@ -31,6 +33,7 @@ namespace AggregationApi.Services.Implementations
 
         public async Task<List<byte[]>> DownloadCsvFiles()
         {
+            _logger.LogInformation("Download started -- {0}", DateTime.Now);
             var csvFiles = new List<byte[]>();
             var fileDownloadTasks = new List<Task>();
 
@@ -42,13 +45,22 @@ namespace AggregationApi.Services.Implementations
                 }));
             }
 
-            await Task.WhenAll(fileDownloadTasks);
+            try
+            {
+                await Task.WhenAll(fileDownloadTasks);
+                _logger.LogInformation("Download finished -- {0}", DateTime.Now);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error occured while downloading, message = {0}", ex.Message);
+            }
 
             return csvFiles;
         }
 
         public List<ElectricityDataCsvModel> ReadDataFromCsvFiles(List<byte[]> csvFiles)
         {
+            _logger.LogInformation("reading data from files");
             var electricityData = new List<ElectricityDataCsvModel>();
 
             foreach (var csvFile in csvFiles)
@@ -63,6 +75,7 @@ namespace AggregationApi.Services.Implementations
 
         public async Task SaveData(List<ElectricityDataCsvModel> data)
         {
+            _logger.LogInformation("saving data to database");
             var dataForDb = data.GroupBy(x => x.Network).Select(y => new ElectricityData
             {
                 Network = y.Key,
