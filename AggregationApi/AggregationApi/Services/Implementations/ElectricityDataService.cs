@@ -28,7 +28,9 @@ namespace AggregationApi.Services.Implementations
 
             var data = ReadDataFromCsvFiles(files);
 
-            await SaveData(data);
+            var interestingData = GetInterestingData(data, Constants.ObtNameFilter);
+
+            await SaveData(interestingData);
         }
 
         public async Task<List<byte[]>> DownloadCsvFiles()
@@ -66,11 +68,16 @@ namespace AggregationApi.Services.Implementations
             foreach (var csvFile in csvFiles)
             {
                 var data = _electricityDataCsvReader.Read(csvFile);
-                var apartmentsData = data.Where(x => x.ObtName.ToLower() == Constants.ObtNameFilter);
-                electricityData.AddRange(apartmentsData);
+                electricityData.AddRange(data);
             }
 
             return electricityData;
+        }
+
+        public List<ElectricityDataCsvModel> GetInterestingData(List<ElectricityDataCsvModel> data, string obtNameFilter)
+        {
+            _logger.LogInformation("filtering data...");
+            return data.Where(x => x.ObtName.ToLower() == obtNameFilter).ToList();
         }
 
         public async Task SaveData(List<ElectricityDataCsvModel> data)
