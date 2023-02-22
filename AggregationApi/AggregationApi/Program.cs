@@ -39,8 +39,8 @@ Log.Logger = new LoggerConfiguration()
                .Enrich.FromLogContext()
                .WriteTo.MSSqlServer(
                     builder.Configuration.GetSection("Serilog:ConnectionStrings:LogDatabase").Value,
-                    sinkOptions: new MSSqlServerSinkOptions { TableName = "Log", AutoCreateSqlTable = true }
-               , null, null, LogEventLevel.Information, null, columnOptions: null, null, null)
+                    sinkOptions: new MSSqlServerSinkOptions { TableName = "Logs", AutoCreateSqlTable = true }
+               , null, null, LogEventLevel.Information, null, null, null, null)
                .CreateLogger();
 
 var app = builder.Build();
