@@ -10,13 +10,12 @@ namespace AggregationApi.Controllers
     public class ElectricityDataController : ControllerBase
     {
         private readonly ElectricityDataService _electricityDataService;
-        private readonly ILogger<ElectricityDataController> _logger;
 
         public ElectricityDataController(ElectricityDataService electricityDataService,ILogger<ElectricityDataController> logger)
         {
             _electricityDataService = electricityDataService;
-            _logger = logger;
         }
+
         [HttpPost("download")]
         public async Task<IActionResult> DownloadData()
         {

@@ -9,12 +9,12 @@ namespace AggregationApi.Services.Implementations
 {
     public class ElectricityDataService
     {
-        private readonly IContentDownloader _contentDownloader;
+        private readonly IFileDownloader _contentDownloader;
         private readonly ICsvReader _csvReader;
         private readonly AppDbContext _context;
         private readonly ILogger<ElectricityDataService> _logger;
 
-        public ElectricityDataService(IContentDownloader contentDownloader, ICsvReader csvReader, AppDbContext context, ILogger<ElectricityDataService> logger)
+        public ElectricityDataService(IFileDownloader contentDownloader, ICsvReader csvReader, AppDbContext context, ILogger<ElectricityDataService> logger)
         {
             _contentDownloader = contentDownloader;
             _csvReader = csvReader;
@@ -43,7 +43,7 @@ namespace AggregationApi.Services.Implementations
             {
                 fileDownloadTasks.Add(Task.Run(async () =>
                 {
-                    csvFiles.Add(await _contentDownloader.DownloadContentAsync(url));
+                    csvFiles.Add(await _contentDownloader.DownloadFileAsync(url));
                 }));
             }
 

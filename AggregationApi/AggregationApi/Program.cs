@@ -24,11 +24,11 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("LocalDb")));
 
-builder.Services.AddScoped<IContentDownloader, HttpClientContentDownloader>();
+builder.Services.AddScoped<IFileDownloader, HttpClientFileDownloader>();
 builder.Services.AddScoped<ICsvReader, ElectricityDataCsvReader>();
 builder.Services.AddScoped<ElectricityDataService>();
 
-builder.Services.AddHttpClient<IContentDownloader, HttpClientContentDownloader>(client =>
+builder.Services.AddHttpClient<IFileDownloader, HttpClientFileDownloader>(client =>
 {
     client.BaseAddress = new Uri(Constants.ElectricityDataBaseUrl);
     client.Timeout = TimeSpan.FromMinutes(6);
@@ -40,12 +40,12 @@ Log.Logger = new LoggerConfiguration()
                .WriteTo.MSSqlServer(
                     builder.Configuration.GetSection("Serilog:ConnectionStrings:LogDatabase").Value,
                     sinkOptions: new MSSqlServerSinkOptions { TableName = "Logs", AutoCreateSqlTable = true }
-               , null, null, LogEventLevel.Information, null, null, null, null)
+                    ,null, null, LogEventLevel.Information, null, null, null, null)
                .CreateLogger();
 
 var app = builder.Build();
 
-DbInitializer.Initialize(app);
+DbInitializer.ApplyMigrations(app);
 
 app.UseSwagger();
 app.UseSwaggerUI();

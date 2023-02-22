@@ -2,16 +2,16 @@
 
 namespace AggregationApi.Services.Implementations
 {
-    public class HttpClientContentDownloader : IContentDownloader
+    public class HttpClientFileDownloader : IFileDownloader
     {
         private readonly HttpClient _client;
 
-        public HttpClientContentDownloader(HttpClient client)
+        public HttpClientFileDownloader(HttpClient client)
         {
             _client = client;
         }
 
-        public async Task<byte[]> DownloadContentAsync(string url)
+        public async Task<byte[]> DownloadFileAsync(string url)
         {
             return await _client.GetByteArrayAsync(url);
         }

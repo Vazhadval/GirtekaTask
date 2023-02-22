@@ -4,7 +4,7 @@ namespace AggregationApi.Data
 {
     public static class DbInitializer
     {
-        public static void Initialize(WebApplication app)
+        public static void ApplyMigrations(WebApplication app)
         {
             using (var scope = app.Services.CreateScope())
             {
