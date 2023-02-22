@@ -6,23 +6,20 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.MSSqlServer;
-using System.Collections.ObjectModel;
-using System.Configuration;
-using System.Data;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
 
 builder.Host.UseSerilog();
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// use "Docker" for docker connection string
+string connectionString = builder.Configuration.GetConnectionString("LocalDb");
+
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("LocalDb")));
+    options.UseSqlServer(connectionString));
 
 builder.Services.AddScoped<IFileDownloader, HttpClientFileDownloader>();
 builder.Services.AddScoped<ICsvReader, ElectricityDataCsvReader>();
@@ -38,9 +35,9 @@ builder.Services.AddHttpClient<IFileDownloader, HttpClientFileDownloader>(client
 Log.Logger = new LoggerConfiguration()
                .Enrich.FromLogContext()
                .WriteTo.MSSqlServer(
-                    builder.Configuration.GetSection("Serilog:ConnectionStrings:LogDatabase").Value,
-                    sinkOptions: new MSSqlServerSinkOptions { TableName = "Logs", AutoCreateSqlTable = true }
-                    ,null, null, LogEventLevel.Information, null, null, null, null)
+                    connectionString: connectionString,
+                    sinkOptions: new MSSqlServerSinkOptions { TableName = "Logs", AutoCreateSqlTable = true },
+                    restrictedToMinimumLevel: LogEventLevel.Information)
                .CreateLogger();
 
 var app = builder.Build();
