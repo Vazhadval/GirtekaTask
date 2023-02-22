@@ -25,7 +25,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("LocalDb")));
 
 builder.Services.AddScoped<IContentDownloader, HttpClientContentDownloader>();
-builder.Services.AddScoped<IElectricityDataCsvReader, ElectricityDataCsvReader>();
+builder.Services.AddScoped<ICsvReader, ElectricityDataCsvReader>();
 builder.Services.AddScoped<ElectricityDataService>();
 
 builder.Services.AddHttpClient<IContentDownloader, HttpClientContentDownloader>(client =>

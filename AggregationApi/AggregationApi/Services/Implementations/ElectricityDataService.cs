@@ -10,14 +10,14 @@ namespace AggregationApi.Services.Implementations
     public class ElectricityDataService
     {
         private readonly IContentDownloader _contentDownloader;
-        private readonly IElectricityDataCsvReader _electricityDataCsvReader;
+        private readonly ICsvReader _csvReader;
         private readonly AppDbContext _context;
         private readonly ILogger<ElectricityDataService> _logger;
 
-        public ElectricityDataService(IContentDownloader contentDownloader, IElectricityDataCsvReader electricityDataCsvReader, AppDbContext context, ILogger<ElectricityDataService> logger)
+        public ElectricityDataService(IContentDownloader contentDownloader, ICsvReader csvReader, AppDbContext context, ILogger<ElectricityDataService> logger)
         {
             _contentDownloader = contentDownloader;
-            _electricityDataCsvReader = electricityDataCsvReader;
+            _csvReader = csvReader;
             _context = context;
             _logger = logger;
         }
@@ -67,8 +67,15 @@ namespace AggregationApi.Services.Implementations
 
             foreach (var csvFile in csvFiles)
             {
-                var data = _electricityDataCsvReader.Read(csvFile);
-                electricityData.AddRange(data);
+                try
+                {
+                    var data = _csvReader.Read<ElectricityDataCsvModel>(csvFile);
+                    electricityData.AddRange(data);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError("error while reading csv file. message : {0}", ex.Message);
+                }
             }
 
             return electricityData;

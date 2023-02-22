@@ -10,9 +10,9 @@ using AggregationApi.Services.Abstractions;
 
 namespace AggregationApi.Services.Implementations
 {
-    public class ElectricityDataCsvReader : IElectricityDataCsvReader
+    public class ElectricityDataCsvReader : ICsvReader
     {
-        public List<ElectricityDataCsvModel> Read(byte[] csvFile)
+        public List<ElectricityDataCsvModel> Read<ElectricityDataCsvModel>(byte[] csvFile)
         {
             var configuration = new CsvConfiguration(CultureInfo.InvariantCulture)
             {

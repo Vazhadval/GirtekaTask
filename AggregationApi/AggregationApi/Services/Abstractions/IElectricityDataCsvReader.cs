@@ -2,8 +2,8 @@
 
 namespace AggregationApi.Services.Abstractions
 {
-    public interface IElectricityDataCsvReader
+    public interface ICsvReader
     {
-        List<ElectricityDataCsvModel> Read(byte[] csvFile);
+        List<T> Read<T>(byte[] csvFile);
     }
 }
