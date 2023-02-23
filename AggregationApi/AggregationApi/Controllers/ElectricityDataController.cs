@@ -11,7 +11,7 @@ namespace AggregationApi.Controllers
     {
         private readonly ElectricityDataService _electricityDataService;
 
-        public ElectricityDataController(ElectricityDataService electricityDataService,ILogger<ElectricityDataController> logger)
+        public ElectricityDataController(ElectricityDataService electricityDataService, ILogger<ElectricityDataController> logger)
         {
             _electricityDataService = electricityDataService;
         }
