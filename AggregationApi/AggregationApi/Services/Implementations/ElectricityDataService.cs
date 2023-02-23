@@ -84,7 +84,7 @@ namespace AggregationApi.Services.Implementations
         public List<ElectricityDataCsvModel> GetInterestingData(List<ElectricityDataCsvModel> data, string obtNameFilter)
         {
             _logger.LogInformation("filtering data...");
-            return data.Where(x => x.ObtName.ToLower() == obtNameFilter).ToList();
+            return data.Where(x => x.ObtName.ToLower() == obtNameFilter.ToLower()).ToList();
         }
 
         public async Task SaveData(List<ElectricityDataCsvModel> data)
