@@ -1,3 +1,5 @@
+* App applies migrations automatically
+
 To run app on docker
 
 1. change connection string from program.cs file
